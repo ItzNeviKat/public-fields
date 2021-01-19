@@ -1,0 +1,21 @@
+{
+  "name": "public-fields",
+  "version": "1.0.0",
+  "description": "A module that allows transform class to object with public fields and conditional fields",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "ItzNeviKat",
+  "license": "MIT",
+  "scripts": {
+    "fmt": "eslint --fix ./src",
+    "build": "tsc",
+    "test": "ts-node ./test"
+  },
+  "devDependencies": {
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.13"
+  }
+}
