@@ -1,10 +1,11 @@
 import { conditionalPublicFieldKey, isPublicFieldKey } from './keys';
+import { TArgs, TSomeItemArgs } from './types';
 
 /**
  * @param model Model of class with public fields
  * @param args Arguments for extracting like conditions
  */
-export function extractPublicFields<T extends Object>(model: T, args?: Record<string, boolean>): T {
+export function extractPublicFields<T extends Object>(model: T, args?: TArgs): T {
   const result: Partial<T> = {};
   const target = Object.getPrototypeOf(model);
 
@@ -37,8 +38,8 @@ export function extractPublicFields<T extends Object>(model: T, args?: Record<st
  */
 export function extractPublicFieldsFromArray<T extends Object>(
     models: T[],
-    args?: Record<string, boolean>,
-    someItemArgs?: (item: T) => Record<string, boolean> | false | undefined
+    args?: TArgs,
+    someItemArgs?: TSomeItemArgs<T>
 ): T[] {
   const result: T[] = [];
 
