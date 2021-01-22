@@ -1,4 +1,4 @@
-import { PublicField, extractPublicFields } from '../src';
+import { PublicField, extractPublicFields, extractPublicFieldsFromArray } from '../src';
 
 class Test2 {
     @PublicField({ condition: 'field1' })
@@ -7,7 +7,7 @@ class Test2 {
     @PublicField()
     public publicField2 = 'bar';
 
-    public privateField1 = 'baz';
+    private privateField1 = 'baz';
 }
 
 class Test {
@@ -20,10 +20,26 @@ class Test {
     @PublicField()
     public publicField3 = new Test2();
 
+    @PublicField()
+    public publicField4: Test2[] = [new Test2()];
+
     public privateField = 'baz';
 }
 
+// Simple test
 const test = new Test();
-const testPublicFields = extractPublicFields(test, { field1: true, field2: false });
+const testPublicFields = extractPublicFields(test, { field1: true, field2: true });
+console.log(testPublicFields);
 
-console.log(testPublicFields)
+// Array test
+const testArray: Test2[] =
+    new Array(10)
+        .fill(undefined)
+        .map(() => new Test2());
+testArray[3].publicField2 = 'no';
+
+const testArrayPublicFields = extractPublicFieldsFromArray(
+    testArray,
+    { field1: false },
+    (item) => item.publicField2 === 'bar' && { field1: true });
+console.log(testArrayPublicFields);
