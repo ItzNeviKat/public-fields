@@ -50,9 +50,16 @@ export function extractPublicFieldsFromArray<T extends Object>(
 ): T[] {
   const result: T[] = [];
 
-  for (const model of models) {
+  for (let model of models) {
     const modelResult: Partial<T> = {};
     const target = Object.getPrototypeOf(model);
+
+    for (const method of Object.getOwnPropertyNames(target)) {
+      const isOnExtractingMethod = Reflect.getMetadata(isOnExtractingMethodKey, target, method);
+      if (isOnExtractingMethod) {
+        model = model[method]();
+      }
+    }
 
     for (const prop in model) {
       if (!model.hasOwnProperty(prop)) continue;
