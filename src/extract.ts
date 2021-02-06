@@ -1,4 +1,4 @@
-import { conditionalPublicFieldKey, isPublicFieldKey } from './keys';
+import { conditionalPublicFieldKey, isPublicFieldKey, isOnExtractingMethodKey } from './keys';
 import { TArgs, TSomeItemArgs } from './types';
 
 /**
@@ -8,6 +8,13 @@ import { TArgs, TSomeItemArgs } from './types';
 export function extractPublicFields<T extends Object>(model: T, args?: TArgs): T {
   const result: Partial<T> = {};
   const target = Object.getPrototypeOf(model);
+
+  for (const method of Object.getOwnPropertyNames(target)) {
+    const isOnExtractingMethod = Reflect.getMetadata(isOnExtractingMethodKey, target, method);
+    if (isOnExtractingMethod) {
+      model = model[method]();
+    }
+  }
 
   for (const prop in model) {
     if (!model.hasOwnProperty(prop)) continue;

@@ -1,4 +1,5 @@
 import { PublicField, extractPublicFields, extractPublicFieldsFromArray } from '../src';
+import { OnExtracting } from '../src/OnExtracting';
 
 class Test2 {
     @PublicField({ condition: 'field1' })
@@ -7,7 +8,14 @@ class Test2 {
     @PublicField()
     public publicField2 = 'bar';
 
+    @PublicField()
+    public num: number;
+
     private privateField1 = 'baz';
+
+    constructor(num?: number) {
+        this.num = num;
+    }
 }
 
 class Test {
@@ -21,9 +29,19 @@ class Test {
     public publicField3 = new Test2();
 
     @PublicField()
-    public publicField4: Test2[] = [new Test2()];
+    public publicField4: Test2[] = [new Test2(2), new Test2(1)];
 
     public privateField = 'baz';
+
+    @OnExtracting()
+    public onExtracting() {
+        return {
+            ...this,
+            publicField4: this.publicField4.sort(
+              (a, b) => a.num - b.num
+            )
+        };
+    }
 }
 
 // Simple test
