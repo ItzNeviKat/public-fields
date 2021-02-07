@@ -5,6 +5,11 @@
   "main": "dist/index",
   "author": "ItzNeviKat",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ItzNeviKat/public-fields.git"
+  },
+  "homepage": "https://github.com/ItzNeviKat/public-fields#readme",
   "scripts": {
     "fmt": "eslint --fix ./src",
     "build": "tsc",
