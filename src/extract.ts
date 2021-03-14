@@ -5,14 +5,14 @@ import { TArgs, TSomeItemArgs } from './types';
  * @param model Model of class with public fields
  * @param args Arguments for extracting like conditions
  */
-export function extractPublicFields<T extends Object>(model: T, args?: TArgs): T {
+export async function extractPublicFields<T extends Object>(model: T, args?: TArgs): Promise<T> {
   const result: Partial<T> = {};
   const target = Object.getPrototypeOf(model);
 
   for (const method of Object.getOwnPropertyNames(target)) {
     const isOnExtractingMethod = Reflect.getMetadata(isOnExtractingMethodKey, target, method);
     if (isOnExtractingMethod) {
-      model = model[method]();
+      model = await model[method]();
     }
   }
 
@@ -25,10 +25,10 @@ export function extractPublicFields<T extends Object>(model: T, args?: TArgs): T
       if (condition && (!args || !args[condition])) continue;
 
       if (model[prop] instanceof Array) {
-        result[prop] = extractPublicFieldsFromArray(model[prop] as unknown as Object[], args) as T[Extract<any, any>];
+        result[prop] = await extractPublicFieldsFromArray(model[prop] as unknown as Object[], args) as T[Extract<any, any>];
         continue;
       } if (model[prop] instanceof Object) {
-        result[prop] = extractPublicFields(model[prop], args);
+        result[prop] = await extractPublicFields(model[prop], args);
         continue;
       }
       result[prop] = model[prop];
@@ -43,11 +43,11 @@ export function extractPublicFields<T extends Object>(model: T, args?: TArgs): T
  * @param args Arguments for extracting like conditions
  * @param someItemArgs Will execute with each model and you can return arguments specific for current model
  */
-export function extractPublicFieldsFromArray<T extends Object>(
+export async function extractPublicFieldsFromArray<T extends Object>(
     models: T[],
     args?: TArgs,
     someItemArgs?: TSomeItemArgs<T>
-): T[] {
+): Promise<T[]> {
   const result: T[] = [];
 
   for (let model of models) {
@@ -57,7 +57,7 @@ export function extractPublicFieldsFromArray<T extends Object>(
     for (const method of Object.getOwnPropertyNames(target)) {
       const isOnExtractingMethod = Reflect.getMetadata(isOnExtractingMethodKey, target, method);
       if (isOnExtractingMethod) {
-        model = model[method]();
+        model = await model[method]();
       }
     }
 
@@ -80,7 +80,7 @@ export function extractPublicFieldsFromArray<T extends Object>(
         ) continue;
 
         if (model[prop] instanceof Object) {
-          modelResult[prop] = extractPublicFields(model[prop], itemArgs ? { ...itemArgs, ...args } : args);
+          modelResult[prop] = await extractPublicFields(model[prop], itemArgs ? { ...itemArgs, ...args } : args);
           continue;
         }
         modelResult[prop] = model[prop];
