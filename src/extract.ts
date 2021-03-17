@@ -25,6 +25,12 @@ export async function extractPublicFields<T extends Object>(model: T, args?: TAr
       if (condition && (!args || !args[condition])) continue;
 
       if (model[prop] instanceof Array) {
+        if (typeof model[prop][0] !== 'number' || typeof model[prop][0] !== 'string' || typeof model[prop][0] !== 'boolean') {
+          console.log(model[prop]);
+          result[prop] = model[prop];
+          continue;
+        }
+        
         result[prop] = await extractPublicFieldsFromArray(model[prop] as unknown as Object[], args) as T[Extract<any, any>];
         continue;
       } if (model[prop] instanceof Object) {
